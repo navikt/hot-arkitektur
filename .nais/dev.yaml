@@ -1,0 +1,16 @@
+name: hot-arkitektur
+
+ingress:
+  intern: https://hot-arkitektur.intern.dev.nav.no
+  ansatt: https://hot-arkitektur.ansatt.dev.nav.no
+
+replicas:
+  min: 1
+  max: 2
+
+resources:
+  limits:
+    memory: 512Mi
+  requests:
+    cpu: 50m
+    memory: 256Mi

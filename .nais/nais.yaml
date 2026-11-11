@@ -1,0 +1,26 @@
+kind: Application
+apiVersion: nais.io/v1alpha1
+metadata:
+  name: {{ name }}
+  namespace: teamdigihot
+  labels:
+    team: teamdigihot
+spec:
+  image: {{ image }}
+  port: 3000
+  ingresses:
+    - {{ ingress.intern }}
+    - {{ ingress.ansatt }}
+  env:
+    - name: NODE_ENV
+      value: production
+  replicas:
+    min: {{ replicas.min }}
+    max: {{ replicas.max }}
+    cpuThresholdPercentage: 80
+  resources:
+    limits:
+      memory: {{ resources.limits.memory }}
+    requests:
+      cpu: {{ resources.requests.cpu }}
+      memory: {{ resources.requests.memory }}

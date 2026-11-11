@@ -1,0 +1,47 @@
+.group {
+  display: grid;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.table {
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 10px;
+  background: var(--ax-bg-default);
+  scroll-margin-top: 4.5rem;
+}
+
+.table > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.25rem 1rem;
+  padding: 0.65rem 1rem;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.table > summary:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 2px;
+  border-radius: 10px;
+}
+
+.meta {
+  font-weight: 400;
+  font-size: 0.85rem;
+  color: var(--ax-text-neutral-subtle);
+}
+
+.body {
+  display: grid;
+  gap: 0.75rem;
+  padding: 0 1rem 1rem;
+  min-width: 0;
+}
+
+.source {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--ax-text-neutral-subtle);
+}

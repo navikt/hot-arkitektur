@@ -1,0 +1,48 @@
+.scroll {
+  overflow-x: auto;
+  border-radius: 8px;
+}
+
+.scroll:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 2px;
+}
+
+.table {
+  min-width: 36rem;
+}
+
+.caption {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.defs {
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.defs li {
+  display: grid;
+  gap: 0.15rem;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  background: var(--ax-bg-neutral-soft);
+  overflow-wrap: anywhere;
+}
+
+.definition {
+  color: var(--ax-text-neutral-subtle);
+}
+
+.none {
+  margin: 0.5rem 0 1rem;
+  color: var(--ax-text-neutral-subtle);
+}

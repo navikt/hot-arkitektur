@@ -1,0 +1,380 @@
+.frame {
+  padding: 1rem;
+}
+
+.group {
+  fill: none;
+  stroke: var(--ax-border-neutral-subtle);
+  stroke-width: 1.5;
+}
+
+.groupLabel {
+  font-size: 12px;
+  font-weight: 600;
+  fill: var(--ax-text-neutral-subtle);
+}
+
+.badgeText {
+  font-size: 11px;
+  font-weight: 700;
+  fill: var(--ax-text-neutral-contrast);
+  letter-spacing: 0.04em;
+}
+
+/* Dempede elementer får dempet farge og tynnere strek i stedet for lav opacity, så kontrasten holder. */
+.edge[data-dim="true"] .edgeLabel {
+  fill: var(--ax-text-neutral-subtle);
+}
+
+.skip {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip:focus {
+  position: static;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  clip-path: none;
+  margin: 0.25rem 0;
+  padding: 0.25rem 0.5rem;
+  background: var(--ax-bg-default);
+  color: var(--ax-text-accent);
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 2px;
+}
+
+.skipTarget {
+  outline: none;
+}
+
+.hint {
+  margin: 0.25rem 0 0.5rem;
+}
+
+.status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-top: 0.75rem;
+}
+
+.status:empty {
+  display: none;
+}
+
+.panelTitle:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 2px;
+}
+
+.steps [aria-disabled="true"] {
+  color: var(--ax-text-neutral-subtle);
+  border-color: var(--ax-border-neutral-subtle);
+  cursor: not-allowed;
+}
+
+.edgeLabel {
+  font-size: 11px;
+  fill: var(--ax-text-neutral);
+  paint-order: stroke;
+  stroke: var(--ax-bg-default);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+
+:global(.dark) .edgeLabel {
+  stroke: var(--ax-bg-raised);
+}
+
+.node {
+  cursor: pointer;
+  outline: none;
+}
+
+.focusRing {
+  stroke: none;
+}
+
+.node:focus-visible .focusRing {
+  stroke: var(--ax-border-focus);
+  stroke-width: 3;
+}
+
+.node:hover .body {
+  stroke-width: 2.5;
+}
+
+.selectionRing {
+  stroke: var(--ax-border-accent-strong);
+  stroke-width: 2;
+}
+
+.nodeLabel {
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.nodeSub,
+.nodeRole {
+  font-size: 10.5px;
+}
+
+.nodeRole {
+  font-weight: 700;
+}
+
+.panel {
+  margin-top: 1rem;
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 12px;
+  background: var(--ax-bg-neutral-soft);
+  min-height: 4rem;
+}
+
+.panelHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.panelLabel {
+  margin-top: 0.75rem;
+  font-weight: 600;
+  color: var(--ax-text-neutral-subtle);
+}
+
+.list {
+  margin: 0.25rem 0 0;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.9375rem;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.legend {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  margin: 0.75rem 0;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.legend li {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swatch {
+  display: inline-block;
+  width: 1.1rem;
+  height: 0.8rem;
+  border-radius: 3px;
+  border: 2px solid var(--ax-border-neutral-strong);
+}
+
+.swatchExternal {
+  border-style: dashed;
+}
+
+.swatchAcl {
+  border-color: var(--ax-border-warning-strong, var(--ax-border-warning));
+  background: var(--ax-bg-warning-soft);
+}
+
+.swatchSelected {
+  border-color: var(--ax-border-accent-strong);
+  outline: 2px solid var(--ax-border-accent-strong);
+  outline-offset: 2px;
+}
+
+.swatchDim {
+  border-width: 1px;
+  background: var(--ax-bg-default);
+}
+
+.controls {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.steps {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.note {
+  margin: 0.75rem 0;
+  padding: 0.75rem 1rem;
+  border-left: 4px solid var(--ax-border-warning-strong, var(--ax-border-warning));
+  background: var(--ax-bg-warning-soft);
+  border-radius: 6px;
+}
+
+.alt {
+  margin-top: 1rem;
+}
+
+.alt summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.alt summary:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 2px;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 0.75rem 0;
+  font-size: 0.875rem;
+}
+
+.table caption {
+  text-align: left;
+  font-weight: 600;
+  padding-bottom: 0.25rem;
+}
+
+.table th,
+.table td {
+  text-align: left;
+  vertical-align: top;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--ax-border-neutral-subtle);
+}
+
+.tableWrap {
+  overflow-x: auto;
+}
+
+.statusSterk {
+  font-weight: 700;
+}
+
+.cards {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  margin-top: 1rem;
+}
+
+.card {
+  padding: 1rem 1.25rem;
+  border: 1px solid var(--ax-border-neutral-subtle);
+  border-radius: 12px;
+  background: var(--ax-bg-default);
+}
+
+.card h3 {
+  margin: 0 0 0.5rem;
+}
+
+.card p {
+  margin: 0 0 0.5rem;
+}
+
+.proposalTag {
+  margin-left: 0.5rem;
+}
+
+@media (forced-colors: active) {
+  .group {
+    stroke: GrayText;
+  }
+
+  .groupLabel,
+  .edgeLabel,
+  .nodeLabel,
+  .nodeSub,
+  .nodeRole,
+  .badgeText {
+    fill: CanvasText !important;
+    forced-color-adjust: none;
+  }
+
+  .edgeLabel {
+    stroke: Canvas;
+  }
+
+  .edge path {
+    stroke: CanvasText !important;
+    forced-color-adjust: none;
+  }
+
+  .marker {
+    fill: CanvasText !important;
+    forced-color-adjust: none;
+  }
+
+  .body {
+    fill: Canvas !important;
+    stroke: CanvasText !important;
+    forced-color-adjust: none;
+  }
+
+  .aclBadge {
+    fill: ButtonText !important;
+    forced-color-adjust: none;
+  }
+
+  .selectionRing {
+    stroke: Highlight;
+    stroke-width: 3;
+    forced-color-adjust: none;
+  }
+
+  .node[data-selected="true"] .body {
+    stroke: Highlight !important;
+    stroke-width: 4;
+  }
+
+  .node:focus-visible .focusRing {
+    stroke: Highlight;
+    stroke-width: 3;
+    forced-color-adjust: none;
+  }
+
+  .skip:focus,
+  .panelTitle:focus-visible {
+    outline-color: Highlight;
+  }
+
+  .swatch,
+  .swatchSelected {
+    border-color: CanvasText;
+    forced-color-adjust: none;
+  }
+
+  .swatchSelected {
+    outline-color: Highlight;
+  }
+}

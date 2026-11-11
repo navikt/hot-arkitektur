@@ -1,0 +1,847 @@
+:root {
+  color-scheme: light dark;
+  --portal-content-max: 880px;
+  --portal-wide-max: 1180px;
+  --portal-sidebar-w: 256px;
+  --portal-rail-w: 64px;
+  --portal-sidebar-motion: 240ms cubic-bezier(0.2, 0.7, 0.2, 1);
+  --arch-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --arch-ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family:
+    "Source Sans 3", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    sans-serif;
+  font-size: 93.75%;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+html {
+  scroll-padding-top: 5rem;
+}
+
+body {
+  min-height: 100vh;
+  background: var(--ax-bg-default, #fff);
+  color: var(--ax-text-default, #1a1a1a);
+}
+
+a {
+  color: var(--ax-text-accent, #0067c5);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+main code {
+  background: var(--ax-bg-neutral-soft, rgba(0, 0, 0, 0.05));
+  padding: 0.05em 0.35em;
+  border-radius: 4px;
+  font-size: 0.92em;
+  font-family: var(--arch-mono);
+}
+
+.portal-hero {
+  background:
+    radial-gradient(
+      circle at 0% 0%,
+      var(--ax-bg-meta-purple-soft, #ece6f6) 0%,
+      transparent 55%
+    ),
+    radial-gradient(
+      circle at 100% 100%,
+      var(--ax-bg-accent-moderate, #cce1ff) 0%,
+      var(--ax-bg-accent-soft, #e6f0fa) 60%
+    );
+  border-radius: 24px;
+}
+
+.portal-prose {
+  max-width: var(--portal-content-max);
+}
+
+.portal-prose ul {
+  padding-left: 1.5rem;
+}
+
+.portal-prose li + li {
+  margin-top: 0.4rem;
+}
+
+.portal-chip {
+  display: inline-block;
+  font-family: var(--arch-mono);
+  font-size: 0.78rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  background: var(--ax-bg-default, rgba(255, 255, 255, 0.55));
+  border: 1px solid var(--ax-border-subtle, rgba(0, 0, 0, 0.1));
+  color: var(--ax-text-default, #1a1a1a);
+  white-space: nowrap;
+}
+
+/* Diagramramme: alle farger kommer fra Aksel --ax-*-tokens, så rammen følger lys og mørk modus. */
+.portal-diagram {
+  background: var(--ax-bg-default, #fff);
+  border-radius: 12px;
+  padding: 1.5rem;
+  border: 1px solid var(--ax-border-subtle, rgba(0, 0, 0, 0.08));
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+  overflow-x: auto;
+}
+
+.dark .portal-diagram {
+  background: var(--ax-bg-raised, #1c232f);
+  box-shadow: 0 10px 30px -18px rgba(0, 0, 0, 0.8);
+}
+
+/* ------------------------------------------------------------------ */
+/* Portalramme: sidebar (merke, meny, tema) + innhold                  */
+/* ------------------------------------------------------------------ */
+
+.portal-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.portal-main {
+  min-width: 0;
+}
+
+.portal-main:focus {
+  outline: none;
+}
+
+.portal-skip-link {
+  position: absolute;
+  left: 0.75rem;
+  top: 0.75rem;
+  z-index: 100;
+  padding: 0.5rem 0.9rem;
+  border-radius: 8px;
+  background: var(--ax-bg-raised);
+  color: var(--ax-text-default);
+  box-shadow: var(--ax-shadow-dialog);
+  transform: translateY(-200%);
+}
+
+.portal-skip-link:focus {
+  transform: none;
+}
+
+@media (min-width: 900px) {
+  .portal-shell {
+    grid-template-columns: var(--portal-sidebar-w) minmax(0, 1fr);
+    transition: grid-template-columns var(--portal-sidebar-motion);
+  }
+
+  /* Kollapset (bare bred skjerm): ikonskinne. Satt før første tegning av
+     oppstartsskriptet i app/layout.tsx, og endret av components/Sidebar.tsx. */
+  html[data-sidebar="collapsed"] .portal-shell {
+    grid-template-columns: var(--portal-rail-w) minmax(0, 1fr);
+  }
+}
+
+.portal-sidebar {
+  /* Sideavstand i menyen; markøren for aktiv lenke ligger i den. */
+  --portal-nav-pad: 0.75rem;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  background: var(--ax-bg-neutral-soft, #fafafa);
+  border-bottom: 1px solid var(--ax-border-neutral-subtle, rgba(0, 0, 0, 0.08));
+}
+
+@media (min-width: 900px) {
+  .portal-sidebar {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+    align-self: start;
+    height: 100vh;
+    border-bottom: none;
+    border-right: 1px solid var(--ax-border-neutral-subtle, rgba(0, 0, 0, 0.08));
+  }
+
+  html[data-sidebar="collapsed"] .portal-sidebar {
+    --portal-nav-pad: calc((var(--portal-rail-w) - 48px) / 2);
+  }
+}
+
+/* Kollaps-knapp: en liten knott på høyrekanten av sidebaren. */
+.portal-sidebar__collapse {
+  display: none;
+}
+
+@media (min-width: 900px) {
+  .portal-sidebar__collapse {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 24px;
+    right: -12px;
+    z-index: 1;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: 1px solid var(--ax-border-neutral-subtle);
+    border-radius: 50%;
+    background: var(--ax-bg-raised, #fff);
+    color: var(--ax-text-neutral-subtle);
+    font-size: 1rem;
+    cursor: pointer;
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 3px 10px -4px rgba(0, 0, 0, 0.18);
+    transition:
+      color 0.15s ease,
+      background-color 0.15s ease,
+      border-color 0.15s ease,
+      box-shadow 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .portal-sidebar__collapse svg {
+    transition: transform var(--portal-sidebar-motion);
+  }
+
+  html[data-sidebar="collapsed"] .portal-sidebar__collapse svg {
+    transform: rotate(180deg);
+  }
+
+  .portal-sidebar__collapse:hover {
+    color: var(--ax-text-accent);
+    background: var(--ax-bg-accent-soft);
+    border-color: var(--ax-border-accent);
+    box-shadow:
+      0 1px 2px rgba(0, 0, 0, 0.06),
+      0 0 0 4px color-mix(in srgb, var(--ax-bg-accent-strong) 12%, transparent);
+    transform: scale(1.08);
+  }
+
+  .portal-sidebar__collapse:active {
+    transform: scale(0.96);
+  }
+
+  .portal-sidebar__collapse:focus-visible {
+    outline: 3px solid var(--ax-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.portal-sidebar__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.75rem 0.75rem 0.5rem 1rem;
+}
+
+@media (min-width: 900px) {
+  .portal-sidebar__top {
+    padding: 1.25rem 1rem 1rem 1.25rem;
+    transition: padding var(--portal-sidebar-motion);
+  }
+
+  /* Sentrer det 34 px store merket i skinnen. */
+  html[data-sidebar="collapsed"] .portal-sidebar__top {
+    padding-right: 0;
+    padding-left: calc((var(--portal-rail-w) - 34px) / 2);
+  }
+}
+
+.portal-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  min-width: 0;
+  padding: 0.25rem;
+  margin: -0.25rem;
+  border-radius: 10px;
+  color: var(--ax-text-default);
+  text-decoration: none;
+}
+
+.portal-brand:hover {
+  text-decoration: none;
+}
+
+.portal-brand:focus-visible,
+.portal-sidebar__link:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 1px;
+}
+
+.portal-brand__mark {
+  flex: none;
+  width: 34px;
+  height: 34px;
+}
+
+.portal-brand__mark rect {
+  fill: var(--ax-bg-accent-strong);
+}
+
+.portal-brand__letter {
+  fill: none;
+  stroke: var(--ax-text-accent-contrast, #fff);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+
+.portal-brand__mark circle {
+  fill: var(--ax-bg-warning-moderate);
+}
+
+.portal-brand__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--portal-sidebar-motion);
+}
+
+@media (min-width: 900px) {
+  .portal-brand {
+    transition: gap var(--portal-sidebar-motion);
+  }
+
+  html[data-sidebar="collapsed"] .portal-brand {
+    gap: 0;
+  }
+
+  html[data-sidebar="collapsed"] .portal-brand__text {
+    opacity: 0;
+  }
+}
+
+.portal-brand__name {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.portal-brand__sub {
+  font-size: 0.75rem;
+  color: var(--ax-text-neutral-subtle);
+}
+
+.portal-sidebar__panel {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+.portal-sidebar__nav {
+  flex: 1;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 0.5rem var(--portal-nav-pad) 1.25rem;
+  scrollbar-width: thin;
+  transition: padding var(--portal-sidebar-motion);
+}
+
+.portal-sidebar__section + .portal-sidebar__section {
+  margin-top: 1.25rem;
+}
+
+.portal-sidebar__heading {
+  position: relative;
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ax-text-neutral-subtle, #595959);
+  padding: 0 0.65rem;
+  margin-bottom: 0.3rem;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: color var(--portal-sidebar-motion);
+}
+
+/* I skinnen blir seksjonsoverskriftene korte skillelinjer med samme høyde,
+   så ikonene under ikke hopper. */
+.portal-sidebar__heading::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: calc(50% - 10px);
+  width: 20px;
+  height: 1px;
+  background: var(--ax-border-neutral-subtle);
+  opacity: 0;
+  transition: opacity var(--portal-sidebar-motion);
+}
+
+@media (min-width: 900px) {
+  html[data-sidebar="collapsed"] .portal-sidebar__heading {
+    color: transparent;
+  }
+
+  html[data-sidebar="collapsed"] .portal-sidebar__heading::after {
+    opacity: 1;
+  }
+}
+
+.portal-sidebar__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.portal-sidebar__link {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.42rem 0.65rem;
+  border-radius: 8px;
+  color: var(--ax-text-neutral, #1a1a1a);
+  text-decoration: none;
+  font-size: 0.925rem;
+  line-height: 1.3;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    padding var(--portal-sidebar-motion),
+    gap var(--portal-sidebar-motion);
+}
+
+@media (min-width: 900px) {
+  /* Sentrer ikonet i den 48 px brede lenken i skinnen. */
+  html[data-sidebar="collapsed"] .portal-sidebar__link {
+    gap: 0;
+    padding-inline: calc((48px - 1.15rem) / 2);
+  }
+
+  html[data-sidebar="collapsed"] .portal-sidebar__label {
+    opacity: 0;
+  }
+}
+
+.portal-sidebar__icon {
+  flex: none;
+  font-size: 1.15rem;
+  color: var(--ax-text-neutral-subtle);
+  transition: color 0.15s ease;
+}
+
+.portal-sidebar__label {
+  flex: 1;
+  min-width: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  transition: opacity var(--portal-sidebar-motion);
+}
+
+.portal-sidebar__link:hover {
+  background: var(--ax-bg-neutral-moderateA, rgba(0, 0, 0, 0.06));
+  color: var(--ax-text-default);
+  text-decoration: none;
+}
+
+.portal-sidebar__link:hover .portal-sidebar__icon {
+  color: var(--ax-text-default);
+}
+
+.portal-sidebar__link--active,
+.portal-sidebar__link--active:hover {
+  background: var(--ax-bg-accent-soft, #e6f0fa);
+  color: var(--ax-text-accent, #0067c5);
+  font-weight: 600;
+}
+
+.portal-sidebar__link--active .portal-sidebar__icon,
+.portal-sidebar__link--active:hover .portal-sidebar__icon {
+  color: var(--ax-text-accent);
+}
+
+.portal-sidebar__link--active::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--portal-nav-pad));
+  top: 0.4rem;
+  bottom: 0.4rem;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: var(--ax-bg-accent-strong);
+}
+
+/* ---------- Bunn av sidebaren: temavalg ---------- */
+
+.portal-sidebar__footer {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  border-top: 1px solid var(--ax-border-neutral-subtle);
+  overflow: hidden;
+}
+
+.portal-sidebar__footer-label {
+  min-width: 0;
+  white-space: nowrap;
+  font-size: 0.875rem;
+  color: var(--ax-text-neutral-subtle);
+  transition: opacity var(--portal-sidebar-motion);
+}
+
+@media (min-width: 900px) {
+  /* Skinne: bare knappen, midtstilt. */
+  html[data-sidebar="collapsed"] .portal-sidebar__footer {
+    justify-content: center;
+    padding-inline: 0;
+  }
+
+  html[data-sidebar="collapsed"] .portal-sidebar__footer-label {
+    display: none;
+  }
+}
+
+/* ================================================================== */
+/* Sidebyggeklosser (arch-*): hero, nøkkeltall, hoppmeny og seksjoner  */
+/* Alle farger kommer fra Aksel --ax-*-tokens.                         */
+/* ================================================================== */
+
+html:has(.arch-page) {
+  scroll-behavior: smooth;
+}
+
+.arch-page {
+  display: flex;
+  flex-direction: column;
+}
+
+.arch-page section[id] {
+  scroll-margin-top: 5rem;
+}
+
+.arch-mono {
+  font-family: var(--arch-mono);
+}
+
+.arch-subtle {
+  color: var(--ax-text-neutral-subtle);
+}
+
+.arch-eyebrow {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ax-text-neutral-subtle);
+}
+
+/* Tonepalett delt av kort og overskrifter */
+.arch-page [data-tone] {
+  --tone-soft: var(--ax-bg-neutral-soft);
+  --tone-line: var(--ax-border-neutral);
+  --tone-text: var(--ax-text-neutral-subtle);
+}
+.arch-page [data-tone="accent"] {
+  --tone-soft: var(--ax-bg-accent-soft);
+  --tone-line: var(--ax-border-accent);
+  --tone-text: var(--ax-text-accent);
+}
+.arch-page [data-tone="success"] {
+  --tone-soft: var(--ax-bg-success-soft);
+  --tone-line: var(--ax-border-success);
+  --tone-text: var(--ax-text-success);
+}
+.arch-page [data-tone="info"] {
+  --tone-soft: var(--ax-bg-info-soft);
+  --tone-line: var(--ax-border-info);
+  --tone-text: var(--ax-text-info);
+}
+.arch-page [data-tone="meta-purple"] {
+  --tone-soft: var(--ax-bg-meta-purple-soft);
+  --tone-line: var(--ax-border-meta-purple);
+  --tone-text: var(--ax-text-meta-purple);
+}
+.arch-page [data-tone="meta-lime"] {
+  --tone-soft: var(--ax-bg-meta-lime-soft);
+  --tone-line: var(--ax-border-meta-lime);
+  --tone-text: var(--ax-text-meta-lime);
+}
+.arch-page [data-tone="warning"] {
+  --tone-soft: var(--ax-bg-warning-soft);
+  --tone-line: var(--ax-border-warning);
+  --tone-text: var(--ax-text-warning);
+}
+
+@keyframes arch-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes arch-drift {
+  to {
+    transform: translate(22px, 22px);
+  }
+}
+
+/* ---------- Hero ---------- */
+
+.arch-hero {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  align-items: center;
+  gap: 2rem 2.5rem;
+  padding: clamp(1.5rem, 3.5vw, 2.75rem);
+}
+
+.arch-hero::before {
+  content: "";
+  position: absolute;
+  inset: -44px;
+  z-index: -1;
+  background-image: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--ax-border-accent) 40%, transparent) 1.2px,
+    transparent 1.7px
+  );
+  background-size: 22px 22px;
+  mask-image: radial-gradient(ellipse 60% 70% at 88% 18%, #000 0%, transparent 70%);
+  animation: arch-drift 30s linear 1;
+}
+
+.arch-hero__text {
+  animation: arch-rise 700ms var(--arch-ease) backwards;
+}
+
+.arch-hero__lead {
+  max-width: 62ch;
+}
+
+.arch-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.arch-stat {
+  display: flex;
+  flex-direction: column-reverse;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  padding: 0.9rem 1rem;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--ax-bg-default) 74%, transparent);
+  border: 1px solid color-mix(in srgb, var(--ax-border-neutral-subtle) 80%, transparent);
+  backdrop-filter: blur(6px);
+  animation: arch-rise 600ms var(--arch-ease) backwards;
+  animation-delay: var(--arch-delay, 0ms);
+}
+
+.arch-stat dt {
+  font-size: 0.85rem;
+  color: var(--ax-text-neutral-subtle);
+}
+
+.arch-stat dd {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.2rem 0.5rem;
+  margin: 0;
+}
+
+.arch-stat__n {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+}
+
+.arch-stat__sub {
+  font-family: var(--arch-mono);
+  font-size: 0.72rem;
+  color: var(--ax-text-neutral-subtle);
+}
+
+/* ---------- Hoppmeny ---------- */
+
+.arch-jumpnav {
+  position: sticky;
+  top: 0.5rem;
+  z-index: 20;
+  margin-top: 1.25rem;
+  padding: 0.35rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--ax-bg-default) 84%, transparent);
+  backdrop-filter: blur(12px) saturate(1.4);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  border: 1px solid var(--ax-border-neutral-subtle);
+  box-shadow: 0 10px 28px -20px rgba(0, 0, 0, 0.5);
+}
+
+.arch-jumpnav ol {
+  display: flex;
+  gap: 0.2rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.arch-jumpnav ol::-webkit-scrollbar {
+  display: none;
+}
+
+.arch-jumpnav a {
+  display: block;
+  padding: 0.4rem 0.85rem;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+  text-decoration: none;
+  color: var(--ax-text-neutral-subtle);
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+.arch-jumpnav a:hover {
+  text-decoration: none;
+  color: var(--ax-text-neutral);
+  background: var(--ax-bg-neutral-moderate);
+}
+
+.arch-jumpnav a[aria-current] {
+  color: var(--ax-text-accent-contrast);
+  background: var(--ax-bg-accent-strong);
+}
+
+.arch-jumpnav a:focus-visible {
+  outline: 3px solid var(--ax-border-focus);
+  outline-offset: 1px;
+}
+
+/* ---------- Seksjoner ---------- */
+
+.arch-section {
+  margin-top: clamp(3rem, 6vw, 4.5rem);
+}
+
+.arch-section__head {
+  max-width: 80ch;
+  margin-bottom: 1.5rem;
+}
+
+.arch-section__head--aside {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  justify-content: space-between;
+  gap: 0.75rem 1.5rem;
+  max-width: none;
+}
+
+.arch-section__lead {
+  color: var(--ax-text-neutral-subtle);
+}
+
+@supports (animation-timeline: view()) {
+  .arch-section__head {
+    animation: arch-rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 60%;
+  }
+}
+
+/* ---------- Oversiktskort ---------- */
+
+.arch-card {
+  display: block;
+  padding: 1.25rem 1.5rem;
+  border-radius: 14px;
+  background: var(--ax-bg-default);
+  border: 1px solid var(--ax-border-neutral-subtle);
+}
+
+.dark .arch-card {
+  background: var(--ax-bg-raised);
+}
+
+.arch-card__list {
+  display: grid;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.arch-card__list a {
+  font-weight: 600;
+}
+
+/* ---------- Responsivt ---------- */
+
+@media (max-width: 1000px) {
+  .arch-hero {
+    grid-template-columns: 1fr;
+  }
+
+  .arch-stats {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .arch-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ---------- Redusert bevegelse ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html:has(.arch-page) {
+    scroll-behavior: auto;
+  }
+
+  .arch-page *,
+  .arch-page *::before,
+  .arch-page *::after,
+  .arch-hero::before {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .portal-shell,
+  .portal-sidebar *,
+  .portal-sidebar *::after {
+    transition: none !important;
+  }
+}

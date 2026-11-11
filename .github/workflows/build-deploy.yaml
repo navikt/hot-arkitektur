@@ -1,0 +1,78 @@
+name: bygg-og-deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Bygg, test og lag image
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    outputs:
+      docker-image: ${{ steps.docker-build-push.outputs.image }}
+
+    steps:
+      - name: Sjekk ut koden
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Sett opp pnpm
+        uses: pnpm/action-setup@fc06bc1257f339d1d5d8b3a19a8cae5388b55320 # v5
+
+      - name: Sett opp Node 22 (med pnpm-cache)
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Installer avhengigheter
+        run: pnpm install --frozen-lockfile
+
+      - name: Typesjekk
+        run: pnpm typecheck
+
+      - name: Lint
+        run: pnpm lint
+
+      - name: Tester
+        run: pnpm test
+
+      - name: Bygg
+        run: pnpm build
+
+      # Image uten bygg: kopierer standalone-resultatet fra Bygg-steget over.
+      - name: Bygg og push image til GAR
+        if: github.event_name != 'pull_request'
+        uses: nais/docker-build-push@588f76a6f45aeb1e75d5e8417ec6ef6d79b2b39f # v0
+        id: docker-build-push
+        with:
+          team: teamdigihot
+          identity_provider: ${{ secrets.NAIS_WORKLOAD_IDENTITY_PROVIDER }}
+          project_id: ${{ vars.NAIS_MANAGEMENT_PROJECT_ID }}
+
+  deploy-dev:
+    name: Deploy til dev-gcp
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - name: Sjekk ut koden
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Deploy til Nais
+        uses: nais/deploy/actions/deploy@7b60caaded00332e9aa117a8342daa0876851dfe # v2
+        env:
+          CLUSTER: dev-gcp
+          RESOURCE: .nais/nais.yaml
+          VAR: image=${{ needs.build.outputs.docker-image }}
+          VARS: .nais/dev.yaml
