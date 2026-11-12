@@ -311,7 +311,7 @@ export const DOMAIN_NODES: GNode[] = [
       },
     ],
   }),
-  dn("brev", "Brev", ["Innhold og ferdigstilling"], 280, 270, "meta-purple", {
+  dn("brev", "Brev", ["Innhold og ferdigstilling"], 280, 270, "brand-blue", {
     desc: "Brev holder innhold og ferdigstilling. Ett brev har en liste med distribusjoner. Brevstatus utledes fra innholdets og distribusjonenes tilstand.",
     kode: ["brevstatus er en beregnet egenskap."],
     refs: [S.brev, S.brevStatus],
@@ -324,7 +324,7 @@ export const DOMAIN_NODES: GNode[] = [
       },
     ],
   }),
-  dn("distribusjon", "Brevdistribusjon", ["Journalføring og utsending"], 10, 270, "meta-purple", {
+  dn("distribusjon", "Brevdistribusjon", ["Journalføring og utsending"], 10, 270, "brand-blue", {
     desc: "Distribusjonen holder oppfølging av journalføring og utsending for én mottaker.",
     kode: ["isJournalført og isDistribuert utledes fra tidspunktene for journalføring og distribusjon."],
     refs: [S.brevdistribusjon, S.brevdistribusjonStatus],
@@ -406,7 +406,7 @@ export const CONTEXT_NODES: GNode[] = [
     desc: "Eget pakkeområde for vilkårsgrunnlag og vilkårsvurdering for barnebriller. Kandidat til bounded context, ikke vedtatt.",
     refs: [S.vilkarsvurdering],
   }),
-  cn("c-brev", "Brev og distribusjon", ["Innhold, ferdigstilling,", "journalføring og utsending"], 570, 270, "meta-purple", {
+  cn("c-brev", "Brev og distribusjon", ["Innhold, ferdigstilling,", "journalføring og utsending"], 570, 270, "brand-blue", {
     desc: "Eget pakkeområde for brev og distribusjon, med egne DAO-er og tjenester. Kandidat til bounded context, ikke vedtatt.",
     refs: [S.brev, S.brevdistribusjon],
   }),

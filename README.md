@@ -4,7 +4,7 @@ Arkitekturportal for Team HOT (Hjelpemidler og tilrettelegging) i Nav. Portalen 
 
 ## Kjøre lokalt
 
-Krever Node 22 og pnpm 10.
+Krever Node 22.12 eller nyere og pnpm 10.
 
 ```bash
 pnpm install
@@ -16,7 +16,7 @@ Portalen åpnes på http://localhost:3000.
 | Kommando         | Hva den gjør                               |
 | ---------------- | ------------------------------------------ |
 | `pnpm typecheck` | Typesjekker med `tsc`                      |
-| `pnpm lint`      | Kjører ESLint                              |
+| `pnpm lint`      | Kjører Oxlint                              |
 | `pnpm test`      | Kjører datatestene i `scripts/*.test.mjs`  |
 | `pnpm build`     | Bygger portalen (standalone-resultat)      |
 

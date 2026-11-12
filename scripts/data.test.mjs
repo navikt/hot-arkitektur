@@ -22,6 +22,17 @@ test("schema.json er konsistent", () => {
   }
 });
 
+test("arkivtabeller, indekser og constraints er utelatt", () => {
+  assert.ok(schema.columns.every((column) => column.schema !== "arkiv"));
+  assert.ok(schema.indexes.every((index) => index.schema !== "arkiv"));
+  assert.ok(schema.constraints.every((constraint) => constraint.schema !== "arkiv"));
+  assert.ok(
+    schema.constraints.every(
+      (constraint) => constraint.type !== "f" || constraint.target_schema !== "arkiv",
+    ),
+  );
+});
+
 test("hjelpere gir nøkler og relasjoner", () => {
   assert.equal(relations().length, schema.constraints.filter((c) => c.type === "f").length);
   assert.ok(tables.every((table) => columnsOf(table).length > 0));

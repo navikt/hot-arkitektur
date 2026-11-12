@@ -82,7 +82,7 @@ if (process.argv.includes("--check")) {
       JOIN pg_class c ON c.oid = a.attrelid
       JOIN pg_namespace n ON n.oid = c.relnamespace
       LEFT JOIN pg_attrdef d ON d.adrelid = a.attrelid AND d.adnum = a.attnum
-      WHERE n.nspname IN ('public', 'arkiv') AND c.relkind = 'r'
+      WHERE n.nspname = 'public' AND c.relkind = 'r'
         AND a.attnum > 0 AND NOT a.attisdropped
       ORDER BY n.nspname, c.relname, a.attnum
     `);
@@ -101,7 +101,8 @@ if (process.argv.includes("--check")) {
       JOIN pg_namespace n ON n.oid = c.relnamespace
       LEFT JOIN pg_class rc ON rc.oid = con.confrelid
       LEFT JOIN pg_namespace rn ON rn.oid = rc.relnamespace
-      WHERE n.nspname IN ('public', 'arkiv') AND c.relkind = 'r'
+      WHERE n.nspname = 'public' AND c.relkind = 'r'
+        AND (con.contype <> 'f' OR rn.nspname <> 'arkiv')
       ORDER BY n.nspname, c.relname, con.conname
     `);
         const { rows: indexes } = await db.query(`
@@ -115,7 +116,7 @@ if (process.argv.includes("--check")) {
       JOIN pg_class c ON c.oid = i.indrelid
       JOIN pg_class ic ON ic.oid = i.indexrelid
       JOIN pg_namespace n ON n.oid = c.relnamespace
-      WHERE n.nspname IN ('public', 'arkiv')
+      WHERE n.nspname = 'public'
       ORDER BY n.nspname, c.relname, ic.relname
     `);
         const data = {

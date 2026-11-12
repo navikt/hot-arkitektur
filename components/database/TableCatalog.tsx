@@ -5,7 +5,6 @@ import styles from "./TableCatalog.module.css";
 
 const NAMESPACES = [
   { id: "public", title: "Aktivt skjema (public)" },
-  { id: "arkiv", title: "Arkivskjema (arkiv)" },
 ] as const;
 
 /** Alle tabeller med kolonner, constraints og indekser. Hver tabell er en foldbar blokk med fast anker. */

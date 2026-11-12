@@ -49,17 +49,8 @@ main code {
 }
 
 .portal-hero {
-  background:
-    radial-gradient(
-      circle at 0% 0%,
-      var(--ax-bg-meta-purple-soft, #ece6f6) 0%,
-      transparent 55%
-    ),
-    radial-gradient(
-      circle at 100% 100%,
-      var(--ax-bg-accent-moderate, #cce1ff) 0%,
-      var(--ax-bg-accent-soft, #e6f0fa) 60%
-    );
+  background: var(--ax-bg-raised);
+  border: 1px solid var(--ax-border-neutral-subtle);
   border-radius: 24px;
 }
 
@@ -571,10 +562,10 @@ html:has(.arch-page) {
   --tone-line: var(--ax-border-info);
   --tone-text: var(--ax-text-info);
 }
-.arch-page [data-tone="meta-purple"] {
-  --tone-soft: var(--ax-bg-meta-purple-soft);
-  --tone-line: var(--ax-border-meta-purple);
-  --tone-text: var(--ax-text-meta-purple);
+.arch-page [data-tone="brand-blue"] {
+  --tone-soft: var(--ax-bg-brand-blue-soft);
+  --tone-line: var(--ax-border-brand-blue);
+  --tone-text: var(--ax-text-brand-blue);
 }
 .arch-page [data-tone="meta-lime"] {
   --tone-soft: var(--ax-bg-meta-lime-soft);
@@ -624,7 +615,7 @@ html:has(.arch-page) {
   z-index: -1;
   background-image: radial-gradient(
     circle,
-    color-mix(in srgb, var(--ax-border-accent) 40%, transparent) 1.2px,
+    color-mix(in srgb, var(--ax-border-neutral-subtle) 40%, transparent) 1.2px,
     transparent 1.7px
   );
   background-size: 22px 22px;

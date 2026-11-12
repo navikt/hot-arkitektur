@@ -26,7 +26,6 @@ const SECTIONS = [
 ];
 
 const publicCount = tables.filter((table) => table.startsWith("public.")).length;
-const archiveCount = tables.filter((table) => table.startsWith("arkiv.")).length;
 
 const BASELINE = "B170__Baseline.sql";
 const repeatable = schema.migrations.find((file) => file.startsWith("R__"));
@@ -60,7 +59,6 @@ export default function DatabasemodellPage() {
           <HeroStats
             stats={[
               { n: publicCount, label: "Tabeller i public", sub: "aktivt skjema" },
-              { n: archiveCount, label: "Tabeller i arkiv", sub: "arkivskjema" },
               { n: relations().length, label: "Foreign keys" },
               { n: schema.migrations.length, label: "Migreringsfiler", sub: `${firstVersion} til ${lastVersion}` },
             ]}
@@ -83,8 +81,8 @@ export default function DatabasemodellPage() {
               skript i <code>pre_V170/</code> kjøres ikke i tillegg til baseline.
             </BodyLong>
             <BodyLong spacing>
-              Resultatet har <strong>{publicCount} tabeller i public</strong> og{" "}
-              <strong>{archiveCount} tabeller i arkiv</strong>. Flyways egen historikktabell er ikke med. Genereringen
+              Oversikten viser <strong>{publicCount} tabeller i public</strong>. Tabeller i arkivskjemaet og relasjoner
+              til dem er utelatt. Flyways egen historikktabell er ikke med. Genereringen
               bruker en tom, isolert PGlite-database og leser ingen person- eller produksjonsdata. Den bekrefter
               skjemastrukturen, ikke at datamigreringene virker for alle historiske data.
             </BodyLong>
@@ -173,29 +171,16 @@ export default function DatabasemodellPage() {
           id="alle"
           eyebrow="Utsnitt"
           title="Hele skjemaet"
-          lead={`Alle ${tables.length} tabeller, også tekniske tabeller og arkiv, gruppert etter tema.`}
+          lead={`Alle ${tables.length} tabeller i public, inkludert tekniske tabeller, gruppert etter tema.`}
         >
           <div className="portal-prose">
             <BodyLong spacing>
               Diagrammet har alle {tables.length} tabeller. Bruk zoom og rull for å lese enkeltområder, og klikk på en
               tabell for å fremheve relasjonene og dempe resten. Tegningen viser bare nøkkelkolonner og utvalgte
-              tilstandsfelt. Katalogen under har alle kolonnene. Arkivtabellene har stiplet ramme og er merket{" "}
-              <code>arkiv.</code>. De er ikke aktive domenemodeller.
+              tilstandsfelt. Katalogen under har alle kolonnene.
             </BodyLong>
           </div>
           <ErDiagram initialView="alle" />
-          <div className="portal-prose">
-            <BodyLong spacing>
-              <code>person_v1</code>, interne oppgaver, intern oppgavehistorikk, faktum og gammel sakstildeling er flyttet
-              til arkiv. Bruker og innsender har ikke lenger FK til <code>person_v1</code>.{" "}
-              <code>journalforing_v1.intern_oppgave_id</code> beholder derimot en FK til den arkiverte oppgavetabellen.
-              Arkiv kan derfor ikke behandles som et sett frakoblede tabeller.
-            </BodyLong>
-            <BodyLong>
-              Kilder: {src("V205__arkiver_person_v1.sql")}, {src("V207__arkiverer_interne_oppgaver.sql")},{" "}
-              {src("V208__arkiver_faktum.sql")}, {src("V217__drop_gjeldende_views.sql")}.
-            </BodyLong>
-          </div>
         </Section>
 
         <Section
